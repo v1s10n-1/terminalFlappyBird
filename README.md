@@ -1,5 +1,5 @@
 ## terminalFlappyBird using bazel for build
-for now program is written assuming it will be run on linux
+program should build and work no matter the os but i haven't tested
 
 to build:
 ```
