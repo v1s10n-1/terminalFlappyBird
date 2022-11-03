@@ -1,5 +1,7 @@
 ## terminalFlappyBird using bazel for build
-to build use
+for now program is written assuming it will be run on linux
+
+to build:
 ```
 bazel build //main:flappyBird
 ```
