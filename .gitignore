@@ -1,5 +1,2 @@
-bazel-bin
-bazel-out
-bazel-terminalFlappyBird
-bazel-testlogs
-.vscode
+main/a.out
+build
