@@ -1,8 +1,11 @@
 # flappy bird in terminal
 
-mkdir build
-cd build
-cmake ..
-make 
-cd src
-./main
+it should work on windows and linux, didn't test, can't be bothered <br />
+
+mkdir build <br />
+cd build <br />
+cmake ..<br />
+make <br />
+cd src<br />
+./main<br />
+
