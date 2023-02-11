@@ -72,7 +72,7 @@ int main(int argc, char **argv){
     char bird = 'b';
     unsigned char birdPosX = 5;
     unsigned char birdPosY = 5;
-    board.board_table[birdPosX][birdPosY] = bird;
+    board.board_table[5][5] = bird;
 
     while (1){
         system(sysClear.c_str());
@@ -82,7 +82,7 @@ int main(int argc, char **argv){
         board.display();
 
         std::this_thread::sleep_for(
-                std::chrono::milliseconds(250)
+                std::chrono::milliseconds(150)
                 );
     }
 }
