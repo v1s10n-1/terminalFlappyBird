@@ -1,4 +1,5 @@
-#include "placeholder.h"
+//#include "placeholder.h"
+//#include "placeholder.cc"
 #include <iostream>
 #include <unistd.h>
 #include <chrono>
@@ -13,14 +14,29 @@ std::string sysClear = "clear";
 std::string sysClear = "cls";
 #endif
 
+
 class Board{
     public:
         char board_table[64][16] = {{}};
 
-        void display(){
-            for (int height = 0; height < 15; height++)
+        Board(){
+            for (int height = 0; height < 16; height++)
             {
-                for (int width = 0; width < 63; width++)
+                for (int width = 0; width < 64; width++)
+                {
+                    if(height == 15){
+                        board_table[width][height] = *"x"; 
+                    }else{
+                        board_table[width][height] = *" "; 
+                    }
+                }
+            }
+        }
+
+        void display(){
+            for (int height = 0; height < 16; height++)
+            {
+                for (int width = 0; width < 64; width++)
                 {
                     std::cout << board_table[width][height];
 
@@ -32,7 +48,7 @@ class Board{
 
 int fall(unsigned char y)
 {
-    if (y >= 15)
+    if (y == 14)
     {
         return 0;
     }
@@ -60,7 +76,7 @@ int main(int argc, char **argv)
         board.display();
 
         std::this_thread::sleep_for(
-                std::chrono::milliseconds(500)
+                std::chrono::milliseconds(250)
                 );
     }
 }
