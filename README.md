@@ -1,7 +1,7 @@
 # flappy bird in terminal
 
-it should work on windows and linux, didn't test, can't be bothered <br />
-
+works only on linux 
+___
 mkdir build <br />
 cd build <br />
 cmake ..<br />

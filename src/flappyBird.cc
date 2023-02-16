@@ -4,16 +4,26 @@
 #include <unistd.h>
 #include <chrono>
 #include <thread>
+#include <termios.h>
 
-// checking for operating system for console clearing not sure if it works i
-// didn't test on windows and can't be bothered
-#ifdef __unix__
 std::string sysClear = "clear";
 
-#elif defined(_WIN64)
-std::string sysClear = "cls";
-#endif
-
+char getch() {
+    char buf = 0;
+    struct termios old = { 0 };
+    fflush(stdout);
+    if (tcgetattr(0, &old) < 0) perror("tcsetattr()");
+    old.c_lflag    &= ~ICANON;   // local modes = Non Canonical mode
+    old.c_lflag    &= ~ECHO;     // local modes = Disable echo. 
+    old.c_cc[VMIN]  = 1;         // control chars (MIN value) = 1
+    old.c_cc[VTIME] = 0;         // control chars (TIME value) = 0 (No time)
+    if (tcsetattr(0, TCSANOW, &old) < 0) perror("tcsetattr ICANON");
+    if (read(0, &buf, 1) < 0) perror("read()");
+    old.c_lflag    |= ICANON;    // local modes = Canonical mode
+    old.c_lflag    |= ECHO;      // local modes = Enable echo. 
+    if (tcsetattr(0, TCSADRAIN, &old) < 0) perror ("tcsetattr ~ICANON");
+    return buf;
+}
 
 class Board{
     public:
@@ -60,35 +70,48 @@ class Bird{
     char b = 'b';
     int birdPosX = 5;
     int birdPosY = 5;
+
+    int fall(unsigned char y){
+        if (y == 14){
+            return 0;
+        }
+        else{
+            y++;
+            return y;
+        }
+    }
 };
 
+// function for capturing keypress
 
-int fall(unsigned char y){
-    if (y == 14){
-        return 0;
-    }
-    else{
-        y++;
-        return y;
+void quit(){
+    while(1){
+        if(getch() == ' '){
+            exit(0);
+        }
     }
 }
 
+
 int main(int argc, char **argv){
+
+    std::thread thread(quit);
+    
     Board board;
     Obstacle obstacle;
     Bird bird;
-
+    
     obstacle.make_obstacle(&board);
     board.board_table[5][5] = bird.b;
 
     while (1){
         system(sysClear.c_str());
         board.board_table[bird.birdPosX][bird.birdPosY] = ' ';
-        bird.birdPosY = fall(bird.birdPosY);
+        bird.birdPosY = bird.fall(bird.birdPosY);
         board.board_table[bird.birdPosX][bird.birdPosY] = bird.b;
         board.display();
 
-        std::this_thread::sleep_for(
+            std::this_thread::sleep_for(
                 std::chrono::milliseconds(150)
                 );
     }
