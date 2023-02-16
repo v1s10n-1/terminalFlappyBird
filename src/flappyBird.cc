@@ -86,21 +86,31 @@ class Bird{
 
 void quit(){
     while(1){
-        if(getch() == ' '){
+        if(getch() == 'q'){
+            //fthread.join();
+            //jthread.join();
             exit(0);
         }
     }
 }
 
+void jump(){
+    while(1){
+        if(getch() == ' '){
+        }
+    }
+}
 
 int main(int argc, char **argv){
 
-    std::thread thread(quit);
     
     Board board;
     Obstacle obstacle;
     Bird bird;
     
+    std::thread fthread(quit);
+    std::thread jthread(jump);    
+
     obstacle.make_obstacle(&board);
     board.board_table[5][5] = bird.b;
 
