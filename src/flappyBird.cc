@@ -55,6 +55,14 @@ class Obstacle{
     }
 };
 
+class Bird{
+    public:
+    char b = 'b';
+    int birdPosX = 5;
+    int birdPosY = 5;
+};
+
+
 int fall(unsigned char y){
     if (y == 14){
         return 0;
@@ -68,17 +76,16 @@ int fall(unsigned char y){
 int main(int argc, char **argv){
     Board board;
     Obstacle obstacle;
+    Bird bird;
+
     obstacle.make_obstacle(&board);
-    char bird = 'b';
-    unsigned char birdPosX = 5;
-    unsigned char birdPosY = 5;
-    board.board_table[5][5] = bird;
+    board.board_table[5][5] = bird.b;
 
     while (1){
         system(sysClear.c_str());
-        board.board_table[birdPosX][birdPosY] = ' ';
-        birdPosY = fall(birdPosY);
-        board.board_table[birdPosX][birdPosY] = bird;
+        board.board_table[bird.birdPosX][bird.birdPosY] = ' ';
+        bird.birdPosY = fall(bird.birdPosY);
+        board.board_table[bird.birdPosX][bird.birdPosY] = bird.b;
         board.display();
 
         std::this_thread::sleep_for(
