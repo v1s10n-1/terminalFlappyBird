@@ -1,29 +1,8 @@
-//#include "placeholder.h"
-//#include "placeholder.cc"
 #include <iostream>
 #include <unistd.h>
 #include <chrono>
 #include <thread>
-#include <termios.h>
-
-std::string sysClear = "clear";
-
-char getch() {
-    char buf = 0;
-    struct termios old = { 0 };
-    fflush(stdout);
-    if (tcgetattr(0, &old) < 0) perror("tcsetattr()");
-    old.c_lflag    &= ~ICANON;   // local modes = Non Canonical mode
-    old.c_lflag    &= ~ECHO;     // local modes = Disable echo. 
-    old.c_cc[VMIN]  = 1;         // control chars (MIN value) = 1
-    old.c_cc[VTIME] = 0;         // control chars (TIME value) = 0 (No time)
-    if (tcsetattr(0, TCSANOW, &old) < 0) perror("tcsetattr ICANON");
-    if (read(0, &buf, 1) < 0) perror("read()");
-    old.c_lflag    |= ICANON;    // local modes = Canonical mode
-    old.c_lflag    |= ECHO;      // local modes = Enable echo. 
-    if (tcsetattr(0, TCSADRAIN, &old) < 0) perror ("tcsetattr ~ICANON");
-    return buf;
-}
+#include <ncurses.h>
 
 class Board{
     public:
@@ -44,10 +23,9 @@ class Board{
         void display(){
             for (int height = 0; height < 16; height++){
                 for (int width = 0; width < 64; width++){
-                    std::cout << board_table[width][height];
-
+                    addch(board_table[width][height]);
                 }
-                std::cout << std::endl;
+                addch(*"\n");
             }
         }
 
@@ -82,47 +60,45 @@ class Bird{
     }
 };
 
-// function for capturing keypress
+void keyPress(){
+    int ch = getch();
 
-void quit(){
-    while(1){
-        if(getch() == 'q'){
-            //fthread.join();
-            //jthread.join();
-            exit(0);
-        }
+    if(ch == 'q'){
+        refresh();
+        endwin();
+        exit(0);
     }
 }
 
-void jump(){
-    while(1){
-        if(getch() == ' '){
-        }
-    }
-}
-
-int main(int argc, char **argv){
-
+int main(){
+    
+    initscr();
+    cbreak();
+    noecho();
+    nodelay(stdscr, TRUE);
+    scrollok(stdscr, TRUE); //nie jestem pewien czy potrzebne w ogole, wyzej to samo
     
     Board board;
     Obstacle obstacle;
     Bird bird;
     
-    std::thread fthread(quit);
-    std::thread jthread(jump);    
+//    std::thread fthread(quit);
+//    std::thread jthread(jump);    
 
     obstacle.make_obstacle(&board);
     board.board_table[5][5] = bird.b;
 
     while (1){
-        system(sysClear.c_str());
+        werase(stdscr);
+
         board.board_table[bird.birdPosX][bird.birdPosY] = ' ';
         bird.birdPosY = bird.fall(bird.birdPosY);
         board.board_table[bird.birdPosX][bird.birdPosY] = bird.b;
         board.display();
-
-            std::this_thread::sleep_for(
-                std::chrono::milliseconds(150)
-                );
+        //refresh();
+        keyPress();
+        std::this_thread::sleep_for(
+            std::chrono::milliseconds(5000)
+            );
     }
 }
