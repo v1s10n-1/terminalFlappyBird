@@ -4,6 +4,9 @@
 #include <thread>
 #include <ncurses.h>
 
+// TODO GOOD COMMENTS
+
+//just board
 class Board{
     public:
         char board_table[64][16] = {{}};
@@ -34,6 +37,7 @@ class Board{
         }
 };
 
+// obstacles that show
 class Obstacle{
     public: 
     void make_obstacle(Board* board_table){
@@ -43,23 +47,28 @@ class Obstacle{
     }
 };
 
+// main character
 class Bird{
     public:
-    char b = 'b';
-    int birdPosX = 5;
-    int birdPosY = 5;
 
-    int fall(unsigned char y){
-        if (y == 14){
-            return 0;
+        //for the future
+    
+        char b = 'b';
+        int birdPosX = 5;
+        int birdPosY = 5;
+
+        int fall(unsigned char y){
+            if (y == 14){
+                return 0;
+            }
+            else{
+                y++;
+                return y;
+            }
         }
-        else{
-            y++;
-            return y;
-        }
-    }
 };
 
+// this will propably be moved to board class
 void keyPress(){
     int ch = getch();
 
@@ -67,6 +76,11 @@ void keyPress(){
         refresh();
         endwin();
         exit(0);
+    }
+
+    // todo jumping
+    if(){
+        
     }
 }
 
@@ -82,8 +96,7 @@ int main(){
     Obstacle obstacle;
     Bird bird;
     
-//    std::thread fthread(quit);
-//    std::thread jthread(jump);    
+    std::thread fthread(keyPress);
 
     obstacle.make_obstacle(&board);
     board.board_table[5][5] = bird.b;
@@ -98,7 +111,7 @@ int main(){
         //refresh();
         keyPress();
         std::this_thread::sleep_for(
-            std::chrono::milliseconds(5000)
+            std::chrono::milliseconds(500)
             );
     }
 }
