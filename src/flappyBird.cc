@@ -1,3 +1,4 @@
+#include <curses.h>
 #include <iostream>
 #include <unistd.h>
 #include <chrono>
@@ -79,8 +80,13 @@ void keyPress(){
     }
 
     // todo jumping
-    if(){
-        
+    else if(ch == ' '){
+        //działa teraz dodać logike
+    }
+    else if (ch != ERR) {
+        refresh();
+        endwin();
+        exit(1);
     }
 }
 
@@ -108,10 +114,10 @@ int main(){
         bird.birdPosY = bird.fall(bird.birdPosY);
         board.board_table[bird.birdPosX][bird.birdPosY] = bird.b;
         board.display();
-        //refresh();
         keyPress();
+
         std::this_thread::sleep_for(
-            std::chrono::milliseconds(500)
+            std::chrono::milliseconds(1000)
             );
     }
 }
