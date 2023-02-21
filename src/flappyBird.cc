@@ -66,10 +66,10 @@ class Bird{
                 std::this_thread::sleep_for(
                         std::chrono::milliseconds(200)
                         );
-                char ch = getch();
+                //char ch = getch();
                 board.set_field(5, y, ' ');
 
-                if (ch == ' ') {
+                if (getch() == ' ') {
                     y--;
                 board.set_field(5, y, 'b');
                 continue;
