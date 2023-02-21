@@ -1,4 +1,5 @@
 #include <curses.h>
+#include <functional>
 #include <iostream>
 #include <unistd.h>
 #include <chrono>
@@ -51,42 +52,54 @@ class Obstacle{
 // main character
 class Bird{
     public:
-
-        //for the future
-    
         char b = 'b';
         int birdPosX = 5;
         int birdPosY = 5;
 
-        int fall(unsigned char y){
-            if (y == 14){
-                return 0;
-            }
-            else{
-                y++;
-                return y;
-            }
-        }
 };
 
+        void movement(int &y, Board& board){
+
+        
+            while (1)
+            {
+                std::this_thread::sleep_for(
+                        std::chrono::milliseconds(200)
+                        );
+                char ch = getch();
+                board.set_field(5, y, ' ');
+
+                if (ch == ' ') {
+                    y--;
+                board.set_field(5, y, 'b');
+                continue;
+                }
+                if (y == 14){
+                board.set_field(5, y, 'b');
+                continue;
+                }
+                else{
+                    y++;
+                board.set_field(5, y, 'b');
+                continue;
+                }
+
+            }
+        }
 // this will propably be moved to board class
 void keyPress(){
-    int ch = getch();
+    while(1){
+        int ch = getch();
+        
+        if(ch == 'q'){
+            refresh();
+            endwin();
+            exit(0);
+        }
 
-    if(ch == 'q'){
-        refresh();
-        endwin();
-        exit(0);
-    }
-
-    // todo jumping
-    else if(ch == ' '){
-        //działa teraz dodać logike
-    }
-    else if (ch != ERR) {
-        refresh();
-        endwin();
-        exit(1);
+        std::this_thread::sleep_for(
+                std::chrono::milliseconds(50)
+                );
     }
 }
 
@@ -102,22 +115,23 @@ int main(){
     Obstacle obstacle;
     Bird bird;
     
-    std::thread fthread(keyPress);
+    //thread for listening to key events
+    std::thread mthread(movement, std::ref(bird.birdPosY), std::ref(board));
+    std::thread fthread(keyPress) ;
 
     obstacle.make_obstacle(&board);
-    board.board_table[5][5] = bird.b;
 
     while (1){
         werase(stdscr);
+        //clear()
+        //board.board_table[bird.birdPosX][bird.birdPosY] = ' ';
+        //bird.movement(std::ref(bird.birdPosY));
+        //board.board_table[bird.birdPosX][bird.birdPosY] = bird.b;
 
-        board.board_table[bird.birdPosX][bird.birdPosY] = ' ';
-        bird.birdPosY = bird.fall(bird.birdPosY);
-        board.board_table[bird.birdPosX][bird.birdPosY] = bird.b;
         board.display();
-        keyPress();
 
         std::this_thread::sleep_for(
-            std::chrono::milliseconds(1000)
+            std::chrono::milliseconds(20)
             );
     }
 }
