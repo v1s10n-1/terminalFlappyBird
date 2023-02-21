@@ -58,34 +58,30 @@ class Bird{
 
 };
 
-        void movement(int &y, Board& board){
+void movement(int &y, Board& board){
 
-        
-            while (1)
-            {
-                std::this_thread::sleep_for(
-                        std::chrono::milliseconds(200)
-                        );
-                //char ch = getch();
-                board.set_field(5, y, ' ');
 
-                if (getch() == ' ') {
-                    y--;
-                board.set_field(5, y, 'b');
-                continue;
-                }
-                if (y == 14){
-                board.set_field(5, y, 'b');
-                continue;
-                }
-                else{
-                    y++;
-                board.set_field(5, y, 'b');
-                continue;
-                }
-
-            }
+    while (1)
+    {
+        std::this_thread::sleep_for(
+                std::chrono::milliseconds(200)
+                );
+        board.set_field(5, y, ' ');
+        if (y == 14 || y == 1) {
+            board.set_field(5, y, 'b');
+            continue;
         }
+        else if (getch() == ' ') {
+            flushinp(); 
+            y--;
+            board.set_field(5, y, 'b');
+            continue;
+        }
+        y++;
+        board.set_field(5, y, 'b');
+
+    }
+}
 // this will propably be moved to board class
 void keyPress(){
     while(1){
@@ -123,15 +119,11 @@ int main(){
 
     while (1){
         werase(stdscr);
-        //clear()
-        //board.board_table[bird.birdPosX][bird.birdPosY] = ' ';
-        //bird.movement(std::ref(bird.birdPosY));
-        //board.board_table[bird.birdPosX][bird.birdPosY] = bird.b;
 
         board.display();
 
         std::this_thread::sleep_for(
-            std::chrono::milliseconds(20)
+            std::chrono::milliseconds(50)
             );
     }
 }
