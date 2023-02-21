@@ -1,10 +1,6 @@
 #include <curses.h>
-#include <functional>
-#include <iostream>
 #include <unistd.h>
-#include <chrono>
 #include <thread>
-#include <ncurses.h>
 
 // TODO GOOD COMMENTS
 
@@ -90,7 +86,7 @@ void keyPress(){
         if(ch == 'q'){
             refresh();
             endwin();
-            exit(0);
+            _exit(0);
         }
 
         std::this_thread::sleep_for(
@@ -118,7 +114,8 @@ int main(){
     obstacle.make_obstacle(&board);
 
     while (1){
-        werase(stdscr);
+        clear();
+
 
         board.display();
 
