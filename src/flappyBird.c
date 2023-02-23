@@ -1,5 +1,8 @@
 #include <curses.h>
 
+struct Bird{
+    char symbol;
+}bird;
 
 int main(){
 
@@ -23,18 +26,9 @@ int main(){
     box(win, 0, 0);
     wrefresh(win);
 
-
-
-
-
-
-/*
     while (1){
-
+        mvaddch(5, 5, bird.symbol);
     }
-*/
-
-    getch();
 
     endwin();
 }
