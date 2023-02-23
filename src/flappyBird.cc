@@ -1,7 +1,4 @@
 #include <curses.h>
-#include <unistd.h>
-#include <thread>
-
 
 
 int main(){
@@ -9,12 +6,35 @@ int main(){
     initscr();
     cbreak();
     noecho();
-    nodelay(stdscr, TRUE);
-    scrollok(stdscr, TRUE); 
 
+    int height = 16;
+    int width = 64;
+    int start_y = (LINES - height) / 2;
+    int start_x = (COLS - width) / 2;
+
+    WINDOW * win = newwin(height, width, start_y, start_x); 
+    refresh();
+
+    intrflush(win, FALSE);
+    keypad(win, TRUE);
+    nodelay(win,TRUE);
+    scrollok(win, TRUE); 
+
+    box(win, 0, 0);
+    wrefresh(win);
+
+
+
+
+
+
+/*
     while (1){
 
     }
-    refresh();
+*/
+
+    getch();
+
     endwin();
 }
