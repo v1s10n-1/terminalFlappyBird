@@ -25,8 +25,6 @@ void *input_capture(void* arg);
 
 void *space_input_capture(void* arg);
 
-pthread_mutex_t mutex_ic;
-
 int main(){
 
     initscr();
@@ -54,11 +52,15 @@ int main(){
     mvwhline(win, 23, 0, '#', 72);
 
 
-    pthread_t *i_thread;
-    pthread_create(i_thread, NULL, input_capture, NULL);
+    pthread_t i_thread;
+    if(pthread_create(&i_thread, NULL, input_capture, NULL) != 0){
+        printf("%s\n", "failed to create thread");
+    }
 
-    pthread_t *s_thread;
-    pthread_create(s_thread, NULL, space_input_capture, NULL);
+    pthread_t s_thread;
+    if(pthread_create(&s_thread, NULL, input_capture, NULL) != 0){
+        printf("%s\n", "failed to create thread");
+    }
     
     while (1){
         mvwprintw(win, bird.pos_y, bird.pos_x, "%s", " ");
@@ -71,11 +73,6 @@ int main(){
    
         nanosleep(&ts, NULL);
     }
-    
-    pthread_join(*i_thread, NULL);
-    pthread_join(*s_thread, NULL);
-
-    pthread_mutex_destroy(&mutex_ic);
 
     endwin();
     return 0;
@@ -94,23 +91,16 @@ void *input_capture(void* arg){
         if (mom_i == 6) {
             continue;
         }
-        pthread_mutex_lock(&mutex_ic);
         mom_i++;
-        pthread_mutex_unlock(&mutex_ic);
     }
-    pthread_exit(NULL);
 }
 void *space_input_capture(void* arg){
     while (1) {
         nanosleep(&ts, NULL);
         if (getch() == ' ') {
-            flushinp();
-            pthread_mutex_lock(&mutex_ic);
             mom_i = 0;
-            pthread_mutex_unlock(&mutex_ic);
         }
     }
-    pthread_exit(NULL);
 }
 
 

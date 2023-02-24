@@ -8,7 +8,7 @@ set(CMAKE_CXX_STANDARD 17)
 
 project(terminalFlappyBird C CXX)
 
-set(CMAKE_CXX_FLAGS "-Wall -Wextra -O2")
+set(CMAKE_CXX_FLAGS "-Wall -Wextra -Wpedantic -Wstack-protector -fstack-protector -Wdisabled-optimization")
 
 set(CMAKE_INSTALL_PREFIX ${PROJECT_SOURCE_DIR})
 
