@@ -16,9 +16,9 @@ int mom_i = 0;
 typedef struct Player Player;
 
 //how much time passes between each tick of the bird falling 
-struct timespec ts = {0, 50000000};
+struct timespec ts = {0, 60000000};
 
-//function for making bird fall in future it's gonna also handle going up
+//function for making bird fall in future it's gonna also handle going up, future me here, no it won't
 void fall(Player* player, int diff);
 
 void *input_capture(void* arg);
@@ -48,20 +48,21 @@ int main(){
 
     struct Player bird = {'@', 10, 10};
     Player* bptr = &bird;
-    
+
     mvwhline(win, 23, 0, '#', 72);
 
 
-    pthread_t i_thread;
-    if(pthread_create(&i_thread, NULL, input_capture, NULL) != 0){
+    pthread_t thread[2];
+
+    if(pthread_create(&thread[0], NULL, input_capture, NULL) != 0){
         printf("%s\n", "failed to create thread");
     }
 
     pthread_t s_thread;
-    if(pthread_create(&s_thread, NULL, space_input_capture, NULL) != 0){
+    if(pthread_create(&thread[1], NULL, space_input_capture, NULL) != 0){
         printf("%s\n", "failed to create thread");
     }
-    
+
     while (1){
         mvwprintw(win, bird.pos_y, bird.pos_x, "%s", " ");
 
@@ -70,7 +71,7 @@ int main(){
         mvwprintw(win, bird.pos_y, bird.pos_x, "%s", bird.symbol);
 
         wrefresh(win);
-   
+
         nanosleep(&ts, NULL);
     }
 
@@ -79,10 +80,10 @@ int main(){
 }
 
 void fall(Player* player, int diff){
-    if (player->pos_y > 21) {
-        return;
-    }
-        player->pos_y = player -> pos_y + diff;
+    
+    // to nie działa kompletnie, trzeba naprawić żeby sobie mógł rozbijać głowę o sufit, a nie odlatywać
+    
+    player->pos_y = player -> pos_y + diff;
 }
 
 void *input_capture(void* arg){
@@ -98,7 +99,7 @@ void *space_input_capture(void* arg){
     while (1) {
         nanosleep(&ts, NULL);
         if (getch() == ' ') {
-            printw("%s", "working");
+            printw("%s  ", "working");
             mom_i = 0;
         }
     }
