@@ -3,17 +3,18 @@
 #include <time.h>
 
 
-//defines character and it's starting position
+//defines character it's position and current momentum
 struct Player{
     const char symbol[1];
     int pos_x;
     int pos_y;
+    int momentum;
 };
 
 typedef struct Player Player;
 
-//how much time passes between each time the bird is falling
-struct timespec ts = {0, 35000000};
+//how much time passes between each tick of the bird falling 
+struct timespec ts = {0, 50000000};
 
 //function for making bird fall in future it's gonna also handle going up
 void fall(Player* player);
@@ -46,6 +47,10 @@ int main(){
 
     while (1){
         mvwprintw(win, bird.pos_y, bird.pos_x, "%s", " ");
+
+//tutaj trzeba zaimplementować logike spadania i skakania
+//
+//i przesyłać argument do fall()
 
         fall(bptr);
 
