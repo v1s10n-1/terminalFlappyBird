@@ -38,7 +38,7 @@ int main(){
     int row, col;
     int momentum_tab[] = {-2, -2, -1, -1, 0, 1, 2};
 
-    WINDOW * win = newwin(height, width, start_y, start_x); 
+    WINDOW* win = newwin(height, width, start_y, start_x); 
     refresh();
     wrefresh(win);
 
@@ -47,7 +47,7 @@ int main(){
     getmaxyx(win, col, row);
 
     struct Player bird = {'@', 10, 10};
-    Player *bptr = &bird;
+    Player* bptr = &bird;
     
     mvwhline(win, 23, 0, '#', 72);
 
@@ -58,7 +58,7 @@ int main(){
     }
 
     pthread_t s_thread;
-    if(pthread_create(&s_thread, NULL, input_capture, NULL) != 0){
+    if(pthread_create(&s_thread, NULL, space_input_capture, NULL) != 0){
         printf("%s\n", "failed to create thread");
     }
     
@@ -98,6 +98,7 @@ void *space_input_capture(void* arg){
     while (1) {
         nanosleep(&ts, NULL);
         if (getch() == ' ') {
+            printw("%s", "working");
             mom_i = 0;
         }
     }
