@@ -13,7 +13,8 @@ typedef struct Player{
 }Player;
 
 typedef struct Obstacle{
-    int obastacle_pos_x; //x position of an obstacle
+    int obastacle_pos_x_curr;//x position of an obstacle
+    int obastacle_pos_x_prev;//x position of an obstacle
     int free_space_y; //where on the y axis is the space where bird can pass through
 }Obstacle;
 
@@ -30,7 +31,7 @@ void *input_capture(void* arg);
 
 void *space_input_capture(void* arg);
 
-void handle_obstacle(Obstacle* obstacle, WINDOW* win);
+void handle_obstacle(Obstacle* obstacle, WINDOW* win, int win_height);
 
 int main(){
 
@@ -52,7 +53,7 @@ int main(){
 
     struct Player bird = {'@', 16, 10};
 
-    struct Obstacle obstacle = {110, rand() % 15};
+    struct Obstacle obstacle = {135, 135, rand() % 20 + 8};
 
     mvwhline(win, 35, 0, '#', 135);
 
@@ -70,7 +71,7 @@ int main(){
     while (1){
         mvwprintw(win, bird.pos_y, bird.pos_x, "%s", " ");
 
-        handle_obstacle(&obstacle, win);
+        handle_obstacle(&obstacle, win, height);
 
         fall(&bird, momentum_tab[mom_i]); //bird pointer
 
@@ -109,18 +110,28 @@ void *space_input_capture(void* arg){
     while (1) {
         nanosleep(&ts, NULL);
         if (getch() == ' ') {
-            printw("%s  ", "working");
             mom_i = 0;
         }
     }
 }
 
-void handle_obstacle(Obstacle* obstacle, WINDOW* win){
-    mvwprintw(win, obstacle -> free_space_y, obstacle -> obastacle_pos_x, "%s", " ");
-    
-    obstacle -> obastacle_pos_x = obstacle -> obastacle_pos_x - 2;
-    
-    mvwprintw(win, obstacle -> free_space_y, obstacle -> obastacle_pos_x, "%s", "A");
+void handle_obstacle(Obstacle* obstacle, WINDOW* win, int win_height){
+
+    if (obstacle -> obastacle_pos_x_curr < 3) {
+        obstacle ->obastacle_pos_x_curr = 135;
+        obstacle -> free_space_y = rand() % 20 + 8;
+    }
+
+    for (int i = 1; i < obstacle -> free_space_y - 3; i++) {
+        mvwprintw(win, i, obstacle -> obastacle_pos_x_prev, "%s", " ");
+        mvwprintw(win, i, obstacle -> obastacle_pos_x_curr, "%s", "A");
+    } 
+    for (int i = obstacle -> free_space_y + 3; i < win_height - 1; i++) {
+        mvwprintw(win, i, obstacle -> obastacle_pos_x_prev, "%s", " ");
+        mvwprintw(win, i, obstacle -> obastacle_pos_x_curr, "%s", "A");
+    }
+    obstacle -> obastacle_pos_x_prev = obstacle -> obastacle_pos_x_curr;
+    obstacle -> obastacle_pos_x_curr = obstacle -> obastacle_pos_x_curr - 2;
 }
 
 
