@@ -4,16 +4,19 @@
 #include <pthread.h>
 
 //defines character it's position and current momentum
-struct Player{
+typedef struct Player{
     const char symbol[1];
     int pos_x;
     int pos_y;
     int momentum;
-};
+}Player;
+
+typedef struct Obstacle{
+    int obastacle_pos_x;
+    int free_space_y[];
+}Obstacle;
 
 int mom_i = 0;    
-
-typedef struct Player Player;
 
 //how much time passes between each tick of the bird falling 
 struct timespec ts = {0, 60000000};
@@ -31,12 +34,12 @@ int main(){
     cbreak();
     noecho();
 
-    int height = 24;
-    int width = 72;
+    int height = 36;
+    int width = 136;
     int start_y = (LINES - height) / 2;
     int start_x = (COLS - width) / 2;
     int row, col;
-    int momentum_tab[] = {-2, -2, -1, -1, 0, 1, 2};
+    int momentum_tab[] = {-3, -3, -2, -1, 0, 2, 3};
 
     WINDOW* win = newwin(height, width, start_y, start_x); 
     refresh();
@@ -49,7 +52,7 @@ int main(){
     struct Player bird = {'@', 10, 10};
     Player* bptr = &bird;
 
-    mvwhline(win, 23, 0, '#', 72);
+    mvwhline(win, 35, 0, '#', 136);
 
 
     pthread_t thread[2];
@@ -80,7 +83,12 @@ int main(){
 }
 
 void fall(Player* player, int diff){
-    
+    if(player -> pos_y < 4){
+        player -> pos_y = 4;
+        return;
+    }else if(player -> pos_y > 31){
+        player -> pos_y = 31;
+    }
     // to nie działa kompletnie, trzeba naprawić żeby sobie mógł rozbijać głowę o sufit, a nie odlatywać
     
     player->pos_y = player -> pos_y + diff;
