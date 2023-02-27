@@ -2,6 +2,7 @@
 #include <unistd.h>
 #include <time.h>
 #include <pthread.h>
+#include <stdlib.h>
 
 //defines character it's position and current momentum
 typedef struct Player{
@@ -12,8 +13,8 @@ typedef struct Player{
 }Player;
 
 typedef struct Obstacle{
-    int obastacle_pos_x;
-    int free_space_y[];
+    int obastacle_pos_x; //x position of an obstacle
+    int free_space_y; //where on the y axis is the space where bird can pass through
 }Obstacle;
 
 //global variable for choosing index from a momentum_tab determining direction and speed of falling/jumping
@@ -29,6 +30,8 @@ void *input_capture(void* arg);
 
 void *space_input_capture(void* arg);
 
+void handle_obstacle(Obstacle* obstacle, WINDOW* win);
+
 int main(){
 
     initscr();
@@ -36,7 +39,7 @@ int main(){
     noecho();
 
     int height = 36;
-    int width = 136; //window height and width
+    int width = 135; //window height and width
     int start_y = (LINES - height) / 2; 
     int start_x = (COLS - width) / 2; //variables for calculating where is the middle of the screen to display window there
     int momentum_tab[] = {-3, -3, -2, -1, 0, 2, 3}; //some things are just best hardcoded
@@ -47,12 +50,11 @@ int main(){
 
     box(win, 0, 0);
 
+    struct Player bird = {'@', 16, 10};
 
-    struct Player bird = {'@', 10, 10};
-    Player* bptr = &bird;
+    struct Obstacle obstacle = {110, rand() % 15};
 
-    mvwhline(win, 35, 0, '#', 136);
-
+    mvwhline(win, 35, 0, '#', 135);
 
     pthread_t thread[2];
 
@@ -68,7 +70,9 @@ int main(){
     while (1){
         mvwprintw(win, bird.pos_y, bird.pos_x, "%s", " ");
 
-        fall(bptr, momentum_tab[mom_i]); //bird pointer
+        handle_obstacle(&obstacle, win);
+
+        fall(&bird, momentum_tab[mom_i]); //bird pointer
 
         mvwprintw(win, bird.pos_y, bird.pos_x, "%s", bird.symbol);
 
@@ -100,6 +104,7 @@ void *input_capture(void* arg){
         mom_i++;
     }
 }
+
 void *space_input_capture(void* arg){
     while (1) {
         nanosleep(&ts, NULL);
@@ -110,6 +115,13 @@ void *space_input_capture(void* arg){
     }
 }
 
+void handle_obstacle(Obstacle* obstacle, WINDOW* win){
+    mvwprintw(win, obstacle -> free_space_y, obstacle -> obastacle_pos_x, "%s", " ");
+    
+    obstacle -> obastacle_pos_x = obstacle -> obastacle_pos_x - 2;
+    
+    mvwprintw(win, obstacle -> free_space_y, obstacle -> obastacle_pos_x, "%s", "A");
+}
 
 
 
