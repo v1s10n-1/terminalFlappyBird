@@ -16,9 +16,10 @@ typedef struct Obstacle{
     int free_space_y[];
 }Obstacle;
 
-int mom_i = 0;    
+//global variable for choosing index from a momentum_tab determining direction and speed of falling/jumping
+int mom_i = 0; 
 
-//how much time passes between each tick of the bird falling 
+//how much time passes between each tick
 struct timespec ts = {0, 60000000};
 
 //function for making bird fall in future it's gonna also handle going up, future me here, no it won't
@@ -35,11 +36,10 @@ int main(){
     noecho();
 
     int height = 36;
-    int width = 136;
-    int start_y = (LINES - height) / 2;
-    int start_x = (COLS - width) / 2;
-    int row, col;
-    int momentum_tab[] = {-3, -3, -2, -1, 0, 2, 3};
+    int width = 136; //window height and width
+    int start_y = (LINES - height) / 2; 
+    int start_x = (COLS - width) / 2; //variables for calculating where is the middle of the screen to display window there
+    int momentum_tab[] = {-3, -3, -2, -1, 0, 2, 3}; //some things are just best hardcoded
 
     WINDOW* win = newwin(height, width, start_y, start_x); 
     refresh();
@@ -47,7 +47,6 @@ int main(){
 
     box(win, 0, 0);
 
-    getmaxyx(win, col, row);
 
     struct Player bird = {'@', 10, 10};
     Player* bptr = &bird;
@@ -85,13 +84,11 @@ int main(){
 void fall(Player* player, int diff){
     if(player -> pos_y < 4){
         player -> pos_y = 4;
-        return;
     }else if(player -> pos_y > 31){
         player -> pos_y = 31;
     }
-    // to nie działa kompletnie, trzeba naprawić żeby sobie mógł rozbijać głowę o sufit, a nie odlatywać
     
-    player->pos_y = player -> pos_y + diff;
+    player -> pos_y = player -> pos_y + diff;
 }
 
 void *input_capture(void* arg){
