@@ -3,6 +3,7 @@
 #include <time.h>
 #include <pthread.h>
 #include <stdlib.h>
+#include <string.h>
 
 //defines character it's position and current momentum
 typedef struct Player{
@@ -31,13 +32,18 @@ void *input_capture(void* arg);
 
 void *space_input_capture(void* arg);
 
-void handle_obstacle(Obstacle* obstacle, WINDOW* win, int win_height);
+void handle_obstacle(Player* bird, Obstacle* obstacle, WINDOW* win, int win_height);
+
+void collision(Player* bird, Obstacle* obstacle, pthread_t thread[2] );
 
 int main(){
 
     initscr();
     cbreak();
     noecho();
+
+    start_color();
+	init_pair(1, COLOR_RED, COLOR_BLACK);
 
     int height = 36;
     int width = 135; //window height and width
@@ -53,7 +59,7 @@ int main(){
 
     struct Player bird = {'@', 16, 10};
 
-    struct Obstacle obstacle = {135, 135, rand() % 20 + 8};
+    struct Obstacle obstacle = {132, 132, rand() % 20 + 8};
 
     mvwhline(win, 35, 0, '#', 135);
 
@@ -71,11 +77,13 @@ int main(){
     while (1){
         mvwprintw(win, bird.pos_y, bird.pos_x, "%s", " ");
 
-        handle_obstacle(&obstacle, win, height);
+        handle_obstacle(&bird, &obstacle, win, height);
 
         fall(&bird, momentum_tab[mom_i]); //bird pointer
 
         mvwprintw(win, bird.pos_y, bird.pos_x, "%s", bird.symbol);
+
+        collision(&bird, &obstacle, thread);
 
         wrefresh(win);
 
@@ -115,24 +123,41 @@ void *space_input_capture(void* arg){
     }
 }
 
-void handle_obstacle(Obstacle* obstacle, WINDOW* win, int win_height){
+void handle_obstacle(Player* bird, Obstacle* obstacle, WINDOW* win, int win_height){
 
     if (obstacle -> obastacle_pos_x_curr < 3) {
-        obstacle ->obastacle_pos_x_curr = 135;
-        obstacle -> free_space_y = rand() % 20 + 8;
+        obstacle ->obastacle_pos_x_curr = 132;
+        obstacle -> free_space_y = rand() % 20 + 9;
     }
 
     for (int i = 1; i < obstacle -> free_space_y - 3; i++) {
         mvwprintw(win, i, obstacle -> obastacle_pos_x_prev, "%s", " ");
-        mvwprintw(win, i, obstacle -> obastacle_pos_x_curr, "%s", "A");
+        mvwprintw(win, i, obstacle -> obastacle_pos_x_curr, "%s", "H");
     } 
     for (int i = obstacle -> free_space_y + 3; i < win_height - 1; i++) {
         mvwprintw(win, i, obstacle -> obastacle_pos_x_prev, "%s", " ");
-        mvwprintw(win, i, obstacle -> obastacle_pos_x_curr, "%s", "A");
+        mvwprintw(win, i, obstacle -> obastacle_pos_x_curr, "%s", "H");
     }
     obstacle -> obastacle_pos_x_prev = obstacle -> obastacle_pos_x_curr;
     obstacle -> obastacle_pos_x_curr = obstacle -> obastacle_pos_x_curr - 2;
+
 }
 
+void collision(Player* bird, Obstacle* obstacle, pthread_t thread[2] ){
+    if ((bird -> pos_x == obstacle -> obastacle_pos_x_curr + 2) && ((bird -> pos_y < (obstacle -> free_space_y - 3)) || (bird -> pos_y > (obstacle -> free_space_y + 3)))) {
+        
+        char str[] = "przegrales / przegralas / przegralos LOL";
+        
+        attron(COLOR_PAIR(1));
+        mvaddstr(LINES / 2, COLS / 2 - strlen(str) / 2, str);
+        attroff(COLOR_PAIR(1));
+        //printw("%s", "przegrales / przegralas / przegralos LOL");
+        wrefresh(curscr);
+        getch();
+        
+        endwin();
 
+        _exit(0);
 
+    } 
+}
