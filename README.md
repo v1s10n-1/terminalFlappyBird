@@ -1,5 +1,7 @@
 # flappy bird in terminal
 
+i could make nice library so it looks prettier but i just want to build something else <br />
+
 works at my computer, believe me <br />
 need ncurses library if it doesn't work idk what to tell you, make your own flappyBird idk<br />
 
