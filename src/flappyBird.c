@@ -28,11 +28,11 @@ struct timespec ts = {0, 60000000};
 //function for making bird fall in future it's gonna also handle going up, future me here, no it won't
 void fall(Player* player, int diff);
 
-void *input_capture(void* arg);
+void *input_capture();
 
-void *space_input_capture(void* arg);
+void *space_input_capture();
 
-void handle_obstacle(Player* bird, Obstacle obstacle[], WINDOW* win, int win_height);
+void handle_obstacle(Obstacle obstacle[], WINDOW* win, int win_height);
 
 void collision(Player* bird, Obstacle* obstacle, int win_height);
 
@@ -57,7 +57,7 @@ int main(){
 
     box(win, 0, 0);
 
-    struct Player bird = {'@', 16, 10};
+    struct Player bird = {"@", 16, 10, -1};
 
     struct Obstacle obstacle[5];
     obstacle[0] = (Obstacle){132, 132, rand() % 20 + 8};
@@ -74,7 +74,6 @@ int main(){
         printf("%s\n", "failed to create thread");
     }
 
-    pthread_t s_thread;
     if(pthread_create(&thread[1], NULL, space_input_capture, NULL) != 0){
         printf("%s\n", "failed to create thread");
     }
@@ -82,7 +81,7 @@ int main(){
     while (1){
         mvwprintw(win, bird.pos_y, bird.pos_x, "%s", " ");
 
-        handle_obstacle(&bird, obstacle, win, height);
+        handle_obstacle(obstacle, win, height);
 
         fall(&bird, momentum_tab[mom_i]); //bird pointer
 
@@ -109,7 +108,7 @@ void fall(Player* player, int diff){
     player -> pos_y = player -> pos_y + diff;
 }
 
-void *input_capture(void* arg){
+void *input_capture(){
     while(1){
         nanosleep(&ts, NULL);
         if (mom_i == 6) {
@@ -119,7 +118,7 @@ void *input_capture(void* arg){
     }
 }
 
-void *space_input_capture(void* arg){
+void *space_input_capture(){
     while (1) {
         nanosleep(&ts, NULL);
         if (getch() == ' ') {
@@ -128,7 +127,7 @@ void *space_input_capture(void* arg){
     }
 }
 
-void handle_obstacle(Player* bird, Obstacle obstacle[], WINDOW* win, int win_height){
+void handle_obstacle(Obstacle obstacle[], WINDOW* win, int win_height){
     for(int i = 0; i < 5; i++){
         if (obstacle[i].obastacle_pos_x_curr < 3) {
             obstacle[i].obastacle_pos_x_curr = 132;
@@ -146,7 +145,7 @@ void handle_obstacle(Player* bird, Obstacle obstacle[], WINDOW* win, int win_hei
 void collision(Player* bird, Obstacle obstacle[], int win_height){
     for (int i = 0; i < 5; i++ ) {
         if ((bird -> pos_x == obstacle[i].obastacle_pos_x_curr + 2) && 
-                ((bird -> pos_y < (obstacle[i].free_space_y - 4)) || (bird -> pos_y > (win_height - obstacle[i].free_space_y + 6)))) {
+                ((bird -> pos_y < (obstacle[i].free_space_y - 4)) || (bird -> pos_y > (obstacle[i].free_space_y + 5)))) {
 
             char str[] = "You lost LOL";
 

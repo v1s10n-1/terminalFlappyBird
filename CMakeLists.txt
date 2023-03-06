@@ -1,14 +1,12 @@
 cmake_minimum_required(VERSION 3.12)
 
 set(CMAKE_C_COMPILER "/usr/bin/clang-14")
-set(CMAKE_CXX_COMPILER "/usr/bin/clang++-14")
 
 set(CMAKE_C_STANDARD 11)
-set(CMAKE_CXX_STANDARD 17)
 
 project(terminalFlappyBird C CXX)
 
-set(CMAKE_CXX_FLAGS "-Wall -Wextra -Wpedantic -Wstack-protector -fstack-protector -Wdisabled-optimization")
+set(CMAKE_C_FLAGS "-Wall -Wextra -Wpedantic -O3")
 
 set(CMAKE_INSTALL_PREFIX ${PROJECT_SOURCE_DIR})
 
