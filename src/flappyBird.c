@@ -34,7 +34,7 @@ void *space_input_capture(void* arg);
 
 void handle_obstacle(Player* bird, Obstacle obstacle[], WINDOW* win, int win_height);
 
-void collision(Player* bird, Obstacle* obstacle);
+void collision(Player* bird, Obstacle* obstacle, int win_height);
 
 int main(){
 
@@ -88,7 +88,7 @@ int main(){
 
         mvwprintw(win, bird.pos_y, bird.pos_x, "%s", bird.symbol);
 
-        collision(&bird, obstacle);
+        collision(&bird, obstacle, height);
 
         wrefresh(win);
 
@@ -143,10 +143,10 @@ void handle_obstacle(Player* bird, Obstacle obstacle[], WINDOW* win, int win_hei
     }
 }
 
-void collision(Player* bird, Obstacle obstacle[]){
+void collision(Player* bird, Obstacle obstacle[], int win_height){
     for (int i = 0; i < 5; i++ ) {
         if ((bird -> pos_x == obstacle[i].obastacle_pos_x_curr + 2) && 
-                ((bird -> pos_y < (obstacle[i].free_space_y - 3)) || (bird -> pos_y > (obstacle[i].free_space_y + 4)))) {
+                ((bird -> pos_y < (obstacle[i].free_space_y - 4)) || (bird -> pos_y > (win_height - obstacle[i].free_space_y + 6)))) {
 
             char str[] = "You lost LOL";
 
