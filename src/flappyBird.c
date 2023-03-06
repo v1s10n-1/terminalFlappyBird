@@ -19,7 +19,7 @@ typedef struct Obstacle{
     int free_space_y; //where on the y axis is the space where bird can pass through
 }Obstacle;
 
-//global variable for choosing index from a momentum_tab determining direction and speed of falling/jumping
+//global variable for choosing index from a momentum_tab determining direction and momentum of falling/jumping
 int mom_i = 0; 
 
 //how much time passes between each tick
@@ -41,12 +41,12 @@ int main(){
     initscr();
     cbreak();
     noecho();
-
+    
+    curs_set(0);
     start_color();
 	init_pair(1, COLOR_RED, COLOR_BLACK);
-
     int height = 36;
-    int width = 135; //window height and width
+    int width = 136; //window height and width
     int start_y = (LINES - height) / 2; 
     int start_x = (COLS - width) / 2; //variables for calculating where is the middle of the screen to display window there
     int momentum_tab[] = {-3, -3, -2, -1, 0, 2, 3}; //some things are just best hardcoded
@@ -61,12 +61,12 @@ int main(){
 
     struct Obstacle obstacle[5];
     obstacle[0] = (Obstacle){132, 132, rand() % 20 + 8};
-    obstacle[1] = (Obstacle){159, 159, rand() % 20 + 8};
-    obstacle[2] = (Obstacle){187, 187, rand() % 20 + 8};
-    obstacle[3] = (Obstacle){213, 213, rand() % 20 + 8};
-    obstacle[4] = (Obstacle){241, 241, rand() % 20 + 8};
+    obstacle[1] = (Obstacle){158, 158, rand() % 20 + 8};
+    obstacle[2] = (Obstacle){188, 188, rand() % 20 + 8};
+    obstacle[3] = (Obstacle){214, 214, rand() % 20 + 8};
+    obstacle[4] = (Obstacle){240, 240, rand() % 20 + 8};
 
-    mvwhline(win, 35, 0, '#', 135);
+    mvwhline(win, 35, 0, '#', 136);
 
     pthread_t thread[2];
 
@@ -136,9 +136,8 @@ void handle_obstacle(Player* bird, Obstacle obstacle[], WINDOW* win, int win_hei
         }
         mvwvline(win, 1, obstacle[i].obastacle_pos_x_prev, ' ', 34);
 
-        mvwvline(win, 1, obstacle[i].obastacle_pos_x_curr, 'x', obstacle[i].free_space_y - 4);
-        mvwvline(win, obstacle[i].free_space_y + 5, obstacle[i].obastacle_pos_x_curr, 'x', win_height - obstacle[i].free_space_y - 4);
-
+        mvwvline(win, 1, obstacle[i].obastacle_pos_x_curr, 'x', obstacle[i].free_space_y - 4);                          //needs to be 6 because of hard maths
+        mvwvline(win, obstacle[i].free_space_y + 5, obstacle[i].obastacle_pos_x_curr, 'x', win_height - obstacle[i].free_space_y - 6); 
         obstacle[i].obastacle_pos_x_prev = obstacle[i].obastacle_pos_x_curr;
         obstacle[i].obastacle_pos_x_curr = obstacle[i].obastacle_pos_x_curr - 2;
     }
@@ -147,7 +146,7 @@ void handle_obstacle(Player* bird, Obstacle obstacle[], WINDOW* win, int win_hei
 void collision(Player* bird, Obstacle obstacle[]){
     for (int i = 0; i < 5; i++ ) {
         if ((bird -> pos_x == obstacle[i].obastacle_pos_x_curr + 2) && 
-                ((bird -> pos_y < (obstacle[i].free_space_y - 4)) || (bird -> pos_y > (obstacle[i].free_space_y + 4)))) {
+                ((bird -> pos_y < (obstacle[i].free_space_y - 3)) || (bird -> pos_y > (obstacle[i].free_space_y + 4)))) {
 
             char str[] = "You lost LOL";
 
