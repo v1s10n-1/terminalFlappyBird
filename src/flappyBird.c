@@ -14,8 +14,8 @@ typedef struct Player{
 }Player;
 
 typedef struct Obstacle{
-    int obastacle_pos_x_curr;//x position of an obstacle
-    int obastacle_pos_x_prev;//x position of an obstacle
+    int obstacle_pos_x_curr;//x position of an obstacle
+    int obstacle_pos_x_prev;//x position of an obstacle
     int free_space_y; //where on the y axis is the space where bird can pass through
 }Obstacle;
 
@@ -48,7 +48,7 @@ int main(){
     int height = 36;
     int width = 136; //window height and width
     int start_y = (LINES - height) / 2; 
-    int start_x = (COLS - width) / 2; //variables for calculating where is the middle of the screen to display window there
+    int start_x = (COLS - width) / 2; //variables for calculating where the middle of the screen is to display window there
     int momentum_tab[] = {-3, -3, -2, -1, 0, 2, 3}; //some things are just best hardcoded
 
     WINDOW* win = newwin(height, width, start_y, start_x); 
